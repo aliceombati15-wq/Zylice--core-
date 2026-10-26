@@ -9,7 +9,7 @@
     <style>
         :root {
             --bg-dark: #030705;
-            --panel-bg: rgba(6, 20, 13, 0.75);
+            --panel-bg: rgba(6, 20, 13, 0.85);
             --border-neon: #00ff66;
             --text-main: #00ff66;
             --text-dim: #008833;
@@ -63,58 +63,49 @@
         }
 
         .boot-title {
-            font-size: 1.8rem;
-            letter-spacing: 6px;
+            font-size: 1.6rem;
+            letter-spacing: 5px;
             color: var(--accent-cyan);
             text-shadow: 0 0 15px var(--accent-cyan);
-            opacity: 0;
-            animation: fadeIn 1.5s ease-in forwards 0.5s;
         }
 
         .boot-subtitle {
-            font-size: 0.9rem;
-            letter-spacing: 4px;
+            font-size: 0.8rem;
+            letter-spacing: 3px;
             color: var(--text-dim);
             margin-top: 10px;
-            opacity: 0;
-            animation: fadeIn 1.5s ease-in forwards 1.8s;
         }
 
         .chip-container {
-            margin-top: 30px;
-            width: 140px;
-            height: 140px;
+            margin-top: 25px;
+            width: 130px;
+            height: 130px;
             border: 2px solid var(--border-neon);
             box-shadow: 0 0 20px rgba(0,255,102,0.4), inset 0 0 20px rgba(0,255,102,0.2);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            position: relative;
-            opacity: 0;
-            animation: fadeIn 1.5s ease-in forwards 3.2s;
         }
 
         .chip-logo {
-            font-size: 2.2rem;
+            font-size: 2rem;
             font-weight: bold;
             color: var(--text-bright);
             text-shadow: 0 0 10px var(--border-neon);
         }
 
         .chip-subtext {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             letter-spacing: 2px;
             color: var(--border-neon);
         }
 
         .boot-prompt {
-            margin-top: 40px;
-            font-size: 0.85rem;
+            margin-top: 30px;
+            font-size: 0.8rem;
             color: var(--text-dim);
-            animation: pulse 1.2s infinite alternate;
-            opacity: 0;
-            animation: fadeIn 1.5s ease-in forwards 4.5s;
+            animation: pulse 1s infinite alternate;
         }
 
         /* MAIN APP LAYOUT */
@@ -127,7 +118,6 @@
             gap: 10px;
         }
 
-        /* HEADER HUD */
         header {
             display: flex;
             justify-content: space-between;
@@ -139,9 +129,9 @@
         }
 
         .brand-name {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: bold;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             color: var(--text-bright);
             text-shadow: 0 0 8px var(--border-neon);
         }
@@ -157,18 +147,10 @@
             color: var(--text-main);
             padding: 6px 12px;
             font-family: var(--font-mono);
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             cursor: pointer;
-            transition: all 0.2s;
         }
 
-        .btn-cyber:hover, .btn-cyber:active {
-            background: var(--border-neon);
-            color: #000;
-            box-shadow: 0 0 10px var(--border-neon);
-        }
-
-        /* MAIN BODY GRID */
         .main-content {
             display: flex;
             flex: 1;
@@ -176,39 +158,29 @@
             overflow: hidden;
         }
 
-        /* LEFT TELEMETRY PANEL */
         .side-panel {
-            width: 260px;
+            width: 250px;
             background: var(--panel-bg);
             border: 1px solid var(--border-neon);
             padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            box-shadow: 0 0 10px rgba(0,255,102,0.15);
+            gap: 12px;
         }
 
         .card-header {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-dim);
             border-bottom: 1px solid var(--text-dim);
-            padding-bottom: 4px;
-            letter-spacing: 1px;
-        }
-
-        .metric-group {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
+            padding-bottom: 3px;
         }
 
         .metric-val {
-            font-size: 1.1rem;
+            font-size: 1rem;
             color: var(--text-bright);
             font-weight: bold;
         }
 
-        /* 3D VIEWPORT CONTAINER */
         .viewport-panel {
             flex: 1;
             background: var(--panel-bg);
@@ -216,7 +188,6 @@
             position: relative;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 0 10px rgba(0,255,102,0.15);
         }
 
         #three-canvas {
@@ -227,20 +198,19 @@
 
         .viewport-overlay {
             position: absolute;
-            top: 10px;
-            left: 10px;
+            top: 8px;
+            left: 8px;
             pointer-events: none;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-dim);
         }
 
-        /* BOTTOM PROMPT BAR */
         .prompt-panel {
             background: var(--panel-bg);
             border: 1px solid var(--border-neon);
-            padding: 10px;
+            padding: 8px;
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
         }
 
@@ -249,17 +219,11 @@
             background: rgba(0, 0, 0, 0.6);
             border: 1px solid var(--text-dim);
             color: var(--text-bright);
-            padding: 8px 12px;
+            padding: 8px;
             font-family: var(--font-mono);
             outline: none;
         }
 
-        .prompt-input:focus {
-            border-color: var(--border-neon);
-            box-shadow: 0 0 8px rgba(0,255,102,0.3);
-        }
-
-        /* MODALS */
         .modal {
             display: none;
             position: fixed;
@@ -273,14 +237,13 @@
 
         .modal-box {
             width: 100%;
-            max-width: 420px;
+            max-width: 400px;
             background: #041008;
             border: 1px solid var(--border-neon);
-            box-shadow: 0 0 25px rgba(0,255,102,0.3);
             padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
         }
 
         .modal-header {
@@ -288,14 +251,8 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--border-neon);
-            padding-bottom: 8px;
+            padding-bottom: 6px;
             font-weight: bold;
-        }
-
-        /* ANIMATIONS */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes pulse {
@@ -303,11 +260,8 @@
             100% { opacity: 1; }
         }
 
-        /* MOBILE RESPONSIVENESS */
         @media (max-width: 768px) {
-            .side-panel {
-                display: none; /* Auto-collapse metrics on small screens */
-            }
+            .side-panel { display: none; }
         }
     </style>
 </head>
@@ -323,7 +277,7 @@
             <div class="chip-logo">ZY</div>
             <div class="chip-subtext">ZEELICE COR</div>
         </div>
-        <div class="boot-prompt">[ TAP ANYWHERE TO START SYSTEM ]</div>
+        <div class="boot-prompt">[ TAP ANYWHERE TO ENTER SYSTEM ]</div>
     </div>
 
     <!-- MAIN OS APPLICATION -->
@@ -337,83 +291,71 @@
         </header>
 
         <div class="main-content">
-            <!-- SIDEBAR TELEMETRY -->
             <div class="side-panel">
                 <div>
                     <div class="card-header">USER ACCOUNT</div>
                     <div class="metric-val" id="user-display">GUEST_MODE</div>
                 </div>
-
                 <div>
                     <div class="card-header">TIME-BANK LEDGER</div>
                     <div class="metric-val" id="quota-val">15.0 / 15.0 MINS</div>
-                    <div style="font-size: 0.7rem; color: var(--text-dim); margin-top: 4px;">SYNCED: SUPABASE CLOUD</div>
+                    <div style="font-size: 0.65rem; color: var(--text-dim); margin-top: 3px;">SUPABASE CLOUD SYNCED</div>
                 </div>
-
                 <div>
                     <div class="card-header">ENGINE ARCHITECTURE</div>
                     <div class="metric-val">CP-LRM (ZERO-GPU)</div>
                 </div>
-
                 <div>
                     <div class="card-header">LIVE LOGS</div>
-                    <div id="terminal-log" style="font-size: 0.7rem; color: var(--text-dim); height: 120px; overflow-y: auto; display: flex; flex-direction: column; gap: 3px;">
-                        <div>> ZEELICE COR Kernel v4.09 initialized.</div>
-                        <div>> Ready for prompt matrix input.</div>
+                    <div id="terminal-log" style="font-size: 0.65rem; color: var(--text-dim); height: 110px; overflow-y: auto; display: flex; flex-direction: column; gap: 2px;">
+                        <div>> ZEELICE COR Kernel active.</div>
+                        <div>> Ready for prompt input.</div>
                     </div>
                 </div>
             </div>
 
-            <!-- 3D VIEWPORT -->
             <div class="viewport-panel">
-                <div class="viewport-overlay">CP-LRM REAL-TIME 3D MATRIX [DRAG & SPIN]</div>
+                <div class="viewport-overlay">CP-LRM 3D MATRIX [DRAG & SPIN]</div>
                 <canvas id="three-canvas"></canvas>
             </div>
         </div>
 
-        <!-- BOTTOM PROMPT BAR -->
         <div class="prompt-panel">
-            <input type="text" id="prompt-input" class="prompt-input" placeholder="Prompt anything: 'futuristic matrix core'..." />
+            <input type="text" id="prompt-input" class="prompt-input" placeholder="Prompt: 'futuristic matrix core'..." />
             <button class="btn-cyber" style="background: var(--border-neon); color: #000; font-weight: bold;" onclick="generateAI()">GENERATE</button>
         </div>
     </div>
 
-    <!-- MODAL: AUTHENTICATION -->
     <div id="auth-modal" class="modal">
         <div class="modal-box">
             <div class="modal-header">
                 <span>IDENTITY AUTHENTICATION</span>
                 <span style="cursor: pointer;" onclick="closeModal('auth-modal')">✕</span>
             </div>
-            <p style="font-size: 0.8rem; color: var(--text-dim);">Enter credentials to load dedicated time-bank ledger from Supabase Cloud.</p>
             <input type="email" class="prompt-input" placeholder="User ID / Email" />
             <input type="password" class="prompt-input" placeholder="Security Passkey" />
-            <button class="btn-cyber" onclick="log('User identity session authenticated.'); closeModal('auth-modal');">AUTHENTICATE</button>
+            <button class="btn-cyber" onclick="log('Authenticated.'); closeModal('auth-modal');">AUTHENTICATE</button>
         </div>
     </div>
 
-    <!-- MODAL: SETTINGS -->
     <div id="settings-modal" class="modal">
         <div class="modal-box">
             <div class="modal-header">
                 <span>SYSTEM CONFIGURATION</span>
                 <span style="cursor: pointer;" onclick="closeModal('settings-modal')">✕</span>
             </div>
-            <div style="font-size: 0.8rem; display: flex; flex-direction: column; gap: 10px;">
+            <div style="font-size: 0.75rem; display: flex; flex-direction: column; gap: 8px;">
                 <label><input type="checkbox" checked id="sfx-toggle" /> Enable SFX Synthesizer</label>
-                <label><input type="checkbox" checked id="wireframe-toggle" onchange="toggleWireframe()" /> Matrix Wireframe Overlay</label>
             </div>
-            <button class="btn-cyber" onclick="closeModal('settings-modal')">SAVE SETTINGS</button>
+            <button class="btn-cyber" onclick="closeModal('settings-modal')">SAVE</button>
         </div>
     </div>
 
     <script>
-        // GLOBAL STATE & SYSTEM LOGIC
         let quota = 15.0;
         let audioCtx = null;
         let scene, camera, renderer, coreMesh, innerMesh;
 
-        // WEB AUDIO SYNTHESIZER
         function playTone(freq = 440, duration = 0.08) {
             const toggle = document.getElementById('sfx-toggle');
             if (toggle && !toggle.checked) return;
@@ -421,7 +363,6 @@
                 if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
-                osc.type = 'sine';
                 osc.frequency.value = freq;
                 gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
@@ -432,7 +373,6 @@
             } catch(e){}
         }
 
-        // LOGGING UTILITY
         function log(msg) {
             const terminal = document.getElementById('terminal-log');
             if (terminal) {
@@ -443,7 +383,6 @@
             }
         }
 
-        // START APP & INITIALIZE THREE.JS
         function startApp() {
             playTone(880, 0.15);
             document.getElementById('boot-screen').style.display = 'none';
@@ -463,36 +402,31 @@
             renderer.setSize(container.clientWidth, container.clientHeight);
             renderer.setPixelRatio(window.devicePixelRatio);
 
-            // Create Outer Wireframe Sphere (Matrix Core)
             const outerGeo = new THREE.IcosahedronGeometry(1.5, 2);
             const outerMat = new THREE.MeshBasicMaterial({ color: 0x00ff66, wireframe: true, transparent: true, opacity: 0.6 });
             coreMesh = new THREE.Mesh(outerGeo, outerMat);
             scene.add(coreMesh);
 
-            // Inner Glowing Nucleus
             const innerGeo = new THREE.IcosahedronGeometry(0.7, 1);
             const innerMat = new THREE.MeshBasicMaterial({ color: 0x00f3ff, wireframe: true, transparent: true, opacity: 0.9 });
             innerMesh = new THREE.Mesh(innerGeo, innerMat);
             scene.add(innerMesh);
 
-            // Orbit drag control
             let isDragging = false;
-            let previousMousePosition = { x: 0, y: 0 };
+            let prevPos = { x: 0, y: 0 };
 
-            canvas.addEventListener('pointerdown', () => { isDragging = true; });
+            canvas.addEventListener('pointerdown', (e) => { isDragging = true; prevPos = { x: e.clientX, y: e.clientY }; });
             canvas.addEventListener('pointermove', (e) => {
                 if (!isDragging) return;
-                const deltaX = e.clientX - previousMousePosition.x;
-                const deltaY = e.clientY - previousMousePosition.y;
-                coreMesh.rotation.y += deltaX * 0.005;
-                coreMesh.rotation.x += deltaY * 0.005;
-                innerMesh.rotation.y -= deltaX * 0.005;
-                previousMousePosition = { x: e.clientX, y: e.clientY };
+                const dx = e.clientX - prevPos.x;
+                const dy = e.clientY - prevPos.y;
+                coreMesh.rotation.y += dx * 0.005;
+                coreMesh.rotation.x += dy * 0.005;
+                innerMesh.rotation.y -= dx * 0.005;
+                prevPos = { x: e.clientX, y: e.clientY };
             });
             window.addEventListener('pointerup', () => { isDragging = false; });
-            canvas.addEventListener('pointerdown', (e) => { previousMousePosition = { x: e.clientX, y: e.clientY }; });
 
-            // Handle resize
             window.addEventListener('resize', () => {
                 camera.aspect = container.clientWidth / container.clientHeight;
                 camera.updateProjectionMatrix();
@@ -507,56 +441,27 @@
             if (coreMesh && innerMesh) {
                 coreMesh.rotation.y += 0.003;
                 innerMesh.rotation.y -= 0.006;
-                innerMesh.rotation.x += 0.002;
             }
             renderer.render(scene, camera);
         }
 
-        // AI GENERATION & TIME-BANK DEDUCTION
         function generateAI() {
             const input = document.getElementById('prompt-input');
-            const promptVal = input.value.trim();
-            if (!promptVal) return;
-
+            const val = input.value.trim();
+            if (!val) return;
             if (quota < 2.5) {
-                log('ERROR: Insufficient time-bank quota.');
-                playTone(150, 0.3);
-                alert('Insufficient quota. Login to recharge time-bank ledger.');
+                alert('Insufficient quota.');
                 return;
             }
-
             playTone(600, 0.1);
-            log(`Synthesizing matrix for prompt: "${promptVal}"`);
-            
-            // Deduct quota
             quota -= 2.5;
             document.getElementById('quota-val').innerText = `${quota.toFixed(1)} / 15.0 MINS`;
-            
-            // Morph 3D geometry dynamically
-            if (coreMesh) {
-                coreMesh.rotation.x += 1.5;
-                coreMesh.scale.set(1.2, 1.2, 1.2);
-                setTimeout(() => coreMesh.scale.set(1.0, 1.0, 1.0), 300);
-            }
-
+            log(`Prompt processed: "${val}" (-2.5 mins)`);
             input.value = '';
-            log('Inference complete. 2.5 mins deducted.');
         }
 
-        function toggleWireframe() {
-            const wire = document.getElementById('wireframe-toggle').checked;
-            if (coreMesh) coreMesh.material.wireframe = wire;
-        }
-
-        function openModal(id) {
-            playTone(520, 0.05);
-            document.getElementById(id).style.display = 'flex';
-        }
-
-        function closeModal(id) {
-            playTone(350, 0.05);
-            document.getElementById(id).style.display = 'none';
-        }
+        function openModal(id) { playTone(520, 0.05); document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { playTone(350, 0.05); document.getElementById(id).style.display = 'none'; }
     </script>
 </body>
     </html>
