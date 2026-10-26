@@ -2,331 +2,561 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZYLICE_CORE // WIZDON TECHNOLOGIES</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ZEELICE COR // CYBER INTERFACE</title>
+    <!-- Three.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            --neon-green: #00ff66;
-            --neon-glow: rgba(0, 255, 102, 0.4);
-            --dark-bg: #020405;
-            --panel-bg: rgba(6, 10, 13, 0.9);
-            --border-color: rgba(0, 255, 102, 0.3);
-            --accent-cyan: #00e5ff;
+            --bg-dark: #030705;
+            --panel-bg: rgba(6, 20, 13, 0.75);
+            --border-neon: #00ff66;
+            --text-main: #00ff66;
+            --text-dim: #008833;
+            --text-bright: #ccffdd;
+            --accent-cyan: #00f3ff;
+            --warning-red: #ff3344;
+            --font-mono: 'Courier New', Courier, monospace;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
 
-        body {
-            background-color: var(--dark-bg);
-            color: var(--neon-green);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+        body, html {
+            width: 100%;
+            height: 100%;
             overflow: hidden;
-            background-image: 
-                radial-gradient(circle at 50% 50%, rgba(0, 255, 102, 0.08) 0%, transparent 70%),
-                linear-gradient(rgba(0, 255, 102, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 102, 0.05) 1px, transparent 1px);
-            background-size: 100% 100%, 40px 40px, 40px 40px;
-            touch-action: none;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-mono);
+            font-size: 13px;
         }
 
-        #splash-screen {
+        /* Scanline Overlay */
+        .scanlines {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--dark-bg);
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 3px, 6px 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* INTRO / BOOT SCREEN */
+        #boot-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000;
+            z-index: 1000;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
-            transition: opacity 0.8s ease;
-            gap: 15px;
-        }
-
-        .splash-logo { font-size: 2rem; font-weight: bold; letter-spacing: 4px; color: var(--accent-cyan); text-shadow: 0 0 15px var(--accent-cyan); text-transform: uppercase; }
-        .splash-sub { font-size: 1.1rem; letter-spacing: 2px; color: var(--neon-green); text-shadow: 0 0 10px var(--neon-green); }
-        .splash-author { font-size: 0.85rem; opacity: 0.7; letter-spacing: 3px; margin-top: 20px; text-transform: uppercase; }
-
-        header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 20px; background: var(--panel-bg);
-            border-bottom: 2px solid var(--neon-green);
-            box-shadow: 0 0 20px var(--neon-glow);
-            z-index: 10;
-        }
-
-        .brand-title { font-size: 1.3rem; font-weight: bold; letter-spacing: 2px; text-shadow: 0 0 8px var(--neon-green); }
-        .dock-controls { display: flex; gap: 10px; }
-
-        .btn-action {
-            background: rgba(0, 255, 102, 0.1);
-            border: 1px solid var(--neon-green);
-            color: var(--neon-green);
-            padding: 8px 14px;
-            font-weight: bold;
-            font-size: 0.8rem;
-            border-radius: 4px;
+            text-align: center;
+            padding: 20px;
             cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-action:hover { background: var(--neon-green); color: var(--dark-bg); }
-
-        .dashboard-container {
-            display: grid; grid-template-columns: 280px 1fr;
-            gap: 15px; padding: 15px; flex: 1; height: calc(100vh - 60px);
         }
 
-        .sidebar {
-            background: var(--panel-bg); border: 1px solid var(--border-color);
-            border-radius: 6px; padding: 15px; display: flex; flex-direction: column; gap: 15px;
-            z-index: 5;
+        .boot-title {
+            font-size: 1.8rem;
+            letter-spacing: 6px;
+            color: var(--accent-cyan);
+            text-shadow: 0 0 15px var(--accent-cyan);
+            opacity: 0;
+            animation: fadeIn 1.5s ease-in forwards 0.5s;
         }
 
-        .stat-block { border-left: 3px solid var(--neon-green); padding-left: 10px; }
-        .stat-label { font-size: 0.7rem; opacity: 0.75; text-transform: uppercase; }
-        .stat-value { font-size: 1rem; font-weight: bold; text-shadow: 0 0 5px var(--neon-green); margin-top: 3px; }
-
-        .viewport-panel {
-            background: var(--panel-bg); border: 1px solid var(--border-color);
-            border-radius: 6px; display: flex; flex-direction: column; padding: 15px;
-            position: relative; z-index: 5;
+        .boot-subtitle {
+            font-size: 0.9rem;
+            letter-spacing: 4px;
+            color: var(--text-dim);
+            margin-top: 10px;
+            opacity: 0;
+            animation: fadeIn 1.5s ease-in forwards 1.8s;
         }
 
-        .neural-viewport {
-            flex: 1; border: 1px solid var(--border-color);
-            border-radius: 4px; background: #000; position: relative;
+        .chip-container {
+            margin-top: 30px;
+            width: 140px;
+            height: 140px;
+            border: 2px solid var(--border-neon);
+            box-shadow: 0 0 20px rgba(0,255,102,0.4), inset 0 0 20px rgba(0,255,102,0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            opacity: 0;
+            animation: fadeIn 1.5s ease-in forwards 3.2s;
+        }
+
+        .chip-logo {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: var(--text-bright);
+            text-shadow: 0 0 10px var(--border-neon);
+        }
+
+        .chip-subtext {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: var(--border-neon);
+        }
+
+        .boot-prompt {
+            margin-top: 40px;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            animation: pulse 1.2s infinite alternate;
+            opacity: 0;
+            animation: fadeIn 1.5s ease-in forwards 4.5s;
+        }
+
+        /* MAIN APP LAYOUT */
+        #app-container {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            flex-direction: column;
+            padding: 10px;
+            gap: 10px;
+        }
+
+        /* HEADER HUD */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background: var(--panel-bg);
+            border: 1px solid var(--border-neon);
+            box-shadow: 0 0 10px rgba(0,255,102,0.2);
+        }
+
+        .brand-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            letter-spacing: 3px;
+            color: var(--text-bright);
+            text-shadow: 0 0 8px var(--border-neon);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-cyber {
+            background: rgba(0, 255, 102, 0.1);
+            border: 1px solid var(--border-neon);
+            color: var(--text-main);
+            padding: 6px 12px;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-cyber:hover, .btn-cyber:active {
+            background: var(--border-neon);
+            color: #000;
+            box-shadow: 0 0 10px var(--border-neon);
+        }
+
+        /* MAIN BODY GRID */
+        .main-content {
+            display: flex;
+            flex: 1;
+            gap: 10px;
             overflow: hidden;
         }
 
-        #canvas3d { width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
-        #canvas3d:active { cursor: grabbing; }
+        /* LEFT TELEMETRY PANEL */
+        .side-panel {
+            width: 260px;
+            background: var(--panel-bg);
+            border: 1px solid var(--border-neon);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 0 0 10px rgba(0,255,102,0.15);
+        }
+
+        .card-header {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            border-bottom: 1px solid var(--text-dim);
+            padding-bottom: 4px;
+            letter-spacing: 1px;
+        }
+
+        .metric-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .metric-val {
+            font-size: 1.1rem;
+            color: var(--text-bright);
+            font-weight: bold;
+        }
+
+        /* 3D VIEWPORT CONTAINER */
+        .viewport-panel {
+            flex: 1;
+            background: var(--panel-bg);
+            border: 1px solid var(--border-neon);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 10px rgba(0,255,102,0.15);
+        }
+
+        #three-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
 
         .viewport-overlay {
-            position: absolute; top: 10px; left: 10px; font-size: 0.7rem;
-            background: rgba(0,0,0,0.8); padding: 5px 10px;
-            border: 1px solid var(--border-color); pointer-events: none;
-            color: var(--accent-cyan);
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            pointer-events: none;
+            font-size: 0.75rem;
+            color: var(--text-dim);
         }
 
-        .command-bar {
-            display: flex; gap: 8px; background: #000; padding: 10px;
-            border: 1px solid var(--neon-green); border-radius: 4px; margin-top: 15px;
+        /* BOTTOM PROMPT BAR */
+        .prompt-panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-neon);
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
 
-        .command-input {
-            flex: 1; background: transparent; border: none; color: var(--neon-green);
-            font-size: 0.95rem; outline: none;
+        .prompt-input {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--text-dim);
+            color: var(--text-bright);
+            padding: 8px 12px;
+            font-family: var(--font-mono);
+            outline: none;
         }
 
-        .btn-send { background: var(--neon-green); color: var(--dark-bg); border: none; padding: 8px 18px; font-weight: bold; cursor: pointer; }
+        .prompt-input:focus {
+            border-color: var(--border-neon);
+            box-shadow: 0 0 8px rgba(0,255,102,0.3);
+        }
 
+        /* MODALS */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.85);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-box {
+            width: 100%;
+            max-width: 420px;
+            background: #041008;
+            border: 1px solid var(--border-neon);
+            box-shadow: 0 0 25px rgba(0,255,102,0.3);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-neon);
+            padding-bottom: 8px;
+            font-weight: bold;
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        /* MOBILE RESPONSIVENESS */
         @media (max-width: 768px) {
-            .dashboard-container { grid-template-columns: 1fr; height: auto; display: flex; flex-direction: column; }
+            .side-panel {
+                display: none; /* Auto-collapse metrics on small screens */
+            }
         }
     </style>
 </head>
 <body>
 
-    <div id="splash-screen">
-        <div class="splash-logo">WIZDON TECHNOLOGIES</div>
-        <div class="splash-sub">// ZYLICE_CORE AI SYSTEM</div>
-        <div class="splash-author">MADE BY KELVIN NANDAI</div>
+    <div class="scanlines"></div>
+
+    <!-- BOOT INTRO SEQUENCE -->
+    <div id="boot-screen" onclick="startApp()">
+        <div class="boot-title">WIZDON TECHNOLOGIES</div>
+        <div class="boot-subtitle">CYBERNETIC INTERFACE INITIATED</div>
+        <div class="chip-container">
+            <div class="chip-logo">ZY</div>
+            <div class="chip-subtext">ZEELICE COR</div>
+        </div>
+        <div class="boot-prompt">[ TAP ANYWHERE TO START SYSTEM ]</div>
     </div>
 
-    <header>
-        <div class="brand-title">// ZYLICE_CORE</div>
-        <div class="dock-controls">
-            <button class="btn-action" onclick="loginUser()">🔑 LOGIN ACCOUNT</button>
-            <button class="btn-action" onclick="alert('CP-LRM Engine Active: Zero Cloud GPU Costs')">⚙️ SYSTEM</button>
-        </div>
-    </header>
+    <!-- MAIN OS APPLICATION -->
+    <div id="app-container">
+        <header>
+            <div class="brand-name">// ZEELICE_COR</div>
+            <div class="header-actions">
+                <button class="btn-cyber" onclick="openModal('auth-modal')">🔑 LOGIN</button>
+                <button class="btn-cyber" onclick="openModal('settings-modal')">⚙️ SYSTEM</button>
+            </div>
+        </header>
 
-    <div class="dashboard-container">
-        <div class="sidebar">
-            <div class="stat-block">
-                <div class="stat-label">USER ACCOUNT</div>
-                <div class="stat-value" id="user-display" style="font-size:0.85rem">GUEST_MODE</div>
-            </div>
-            <div class="stat-block">
-                <div class="stat-label">TIME-BANK LEDGER (5-DAY POOL)</div>
-                <div class="stat-value" id="quota-display">15.0 / 15.0 MINS</div>
-                <div class="stat-label" style="font-size:0.6rem; margin-top:2px;">STATUS: SUPABASE CLOUD SYNCED</div>
-            </div>
-            <div class="stat-block">
-                <div class="stat-label">ENGINE ARCHITECTURE</div>
-                <div class="stat-value" style="color:var(--accent-cyan)">CP-LRM (ZERO-GPU)</div>
-            </div>
-        </div>
+        <div class="main-content">
+            <!-- SIDEBAR TELEMETRY -->
+            <div class="side-panel">
+                <div>
+                    <div class="card-header">USER ACCOUNT</div>
+                    <div class="metric-val" id="user-display">GUEST_MODE</div>
+                </div>
 
-        <div class="viewport-panel">
-            <div class="neural-viewport">
+                <div>
+                    <div class="card-header">TIME-BANK LEDGER</div>
+                    <div class="metric-val" id="quota-val">15.0 / 15.0 MINS</div>
+                    <div style="font-size: 0.7rem; color: var(--text-dim); margin-top: 4px;">SYNCED: SUPABASE CLOUD</div>
+                </div>
+
+                <div>
+                    <div class="card-header">ENGINE ARCHITECTURE</div>
+                    <div class="metric-val">CP-LRM (ZERO-GPU)</div>
+                </div>
+
+                <div>
+                    <div class="card-header">LIVE LOGS</div>
+                    <div id="terminal-log" style="font-size: 0.7rem; color: var(--text-dim); height: 120px; overflow-y: auto; display: flex; flex-direction: column; gap: 3px;">
+                        <div>> ZEELICE COR Kernel v4.09 initialized.</div>
+                        <div>> Ready for prompt matrix input.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3D VIEWPORT -->
+            <div class="viewport-panel">
                 <div class="viewport-overlay">CP-LRM REAL-TIME 3D MATRIX [DRAG & SPIN]</div>
-                <canvas id="canvas3d"></canvas>
+                <canvas id="three-canvas"></canvas>
             </div>
+        </div>
 
-            <div class="command-bar">
-                <input type="text" class="command-input" id="user-input" placeholder="Prompt anything: 'futuristic mansion in desert'..." />
-                <button class="btn-send" onclick="executeNeuralRender()">GENERATE</button>
+        <!-- BOTTOM PROMPT BAR -->
+        <div class="prompt-panel">
+            <input type="text" id="prompt-input" class="prompt-input" placeholder="Prompt anything: 'futuristic matrix core'..." />
+            <button class="btn-cyber" style="background: var(--border-neon); color: #000; font-weight: bold;" onclick="generateAI()">GENERATE</button>
+        </div>
+    </div>
+
+    <!-- MODAL: AUTHENTICATION -->
+    <div id="auth-modal" class="modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span>IDENTITY AUTHENTICATION</span>
+                <span style="cursor: pointer;" onclick="closeModal('auth-modal')">✕</span>
             </div>
+            <p style="font-size: 0.8rem; color: var(--text-dim);">Enter credentials to load dedicated time-bank ledger from Supabase Cloud.</p>
+            <input type="email" class="prompt-input" placeholder="User ID / Email" />
+            <input type="password" class="prompt-input" placeholder="Security Passkey" />
+            <button class="btn-cyber" onclick="log('User identity session authenticated.'); closeModal('auth-modal');">AUTHENTICATE</button>
+        </div>
+    </div>
+
+    <!-- MODAL: SETTINGS -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span>SYSTEM CONFIGURATION</span>
+                <span style="cursor: pointer;" onclick="closeModal('settings-modal')">✕</span>
+            </div>
+            <div style="font-size: 0.8rem; display: flex; flex-direction: column; gap: 10px;">
+                <label><input type="checkbox" checked id="sfx-toggle" /> Enable SFX Synthesizer</label>
+                <label><input type="checkbox" checked id="wireframe-toggle" onchange="toggleWireframe()" /> Matrix Wireframe Overlay</label>
+            </div>
+            <button class="btn-cyber" onclick="closeModal('settings-modal')">SAVE SETTINGS</button>
         </div>
     </div>
 
     <script>
-        const SUPABASE_URL = "https://sgfunwgyfnraipoebejv.supabase.co";
-        const SUPABASE_ANON_KEY = "sb_publishable__5vFpNz47vJ3vVzNnKkSQw_xqVyxvYV";
-        
-        let dbClient = null;
-        if (SUPABASE_URL && window.supabase) {
-            dbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // GLOBAL STATE & SYSTEM LOGIC
+        let quota = 15.0;
+        let audioCtx = null;
+        let scene, camera, renderer, coreMesh, innerMesh;
+
+        // WEB AUDIO SYNTHESIZER
+        function playTone(freq = 440, duration = 0.08) {
+            const toggle = document.getElementById('sfx-toggle');
+            if (toggle && !toggle.checked) return;
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e){}
         }
 
-        setTimeout(() => {
-            const splash = document.getElementById('splash-screen');
-            splash.style.opacity = '0';
-            setTimeout(() => splash.style.display = 'none', 800);
-        }, 2500);
-
-        // 3D ENGINE
-        const canvas = document.getElementById('canvas3d');
-        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
-        camera.position.z = 160;
-
-        const geometry = new THREE.IcosahedronGeometry(70, 3);
-        const material = new THREE.MeshBasicMaterial({ color: 0x00ff66, wireframe: true, transparent: true, opacity: 0.6 });
-        const neuralMesh = new THREE.Mesh(geometry, material);
-        scene.add(neuralMesh);
-
-        const coreGeo = new THREE.SphereGeometry(30, 16, 16);
-        const coreMat = new THREE.MeshBasicMaterial({ color: 0x00e5ff, wireframe: true });
-        const coreMesh = new THREE.Mesh(coreGeo, coreMat);
-        scene.add(coreMesh);
-
-        function resizeCanvas() {
-            const parent = canvas.parentElement;
-            renderer.setSize(parent.clientWidth, parent.clientHeight);
-            camera.aspect = parent.clientWidth / parent.clientHeight;
-            camera.updateProjectionMatrix();
-        }
-        window.addEventListener('resize', resizeCanvas);
-        setTimeout(resizeCanvas, 100);
-
-        // DIRECT TOUCH & MOUSE ROTATIONAL DRAG ENGINE
-        let isDragging = false;
-        let previousMousePosition = { x: 0, y: 0 };
-        let autoRotateSpeed = 0.005;
-
-        canvas.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            previousMousePosition = { x: e.clientX, y: e.clientY };
-        });
-
-        canvas.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            const deltaX = e.clientX - previousMousePosition.x;
-            const deltaY = e.clientY - previousMousePosition.y;
-
-            neuralMesh.rotation.y += deltaX * 0.01;
-            neuralMesh.rotation.x += deltaY * 0.01;
-            coreMesh.rotation.y += deltaX * 0.01;
-            coreMesh.rotation.x += deltaY * 0.01;
-
-            previousMousePosition = { x: e.clientX, y: e.clientY };
-        });
-
-        window.addEventListener('mouseup', () => { isDragging = false; });
-
-        canvas.addEventListener('touchstart', (e) => {
-            if (e.touches.length > 0) {
-                isDragging = true;
-                previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        // LOGGING UTILITY
+        function log(msg) {
+            const terminal = document.getElementById('terminal-log');
+            if (terminal) {
+                const item = document.createElement('div');
+                item.innerText = '> ' + msg;
+                terminal.appendChild(item);
+                terminal.scrollTop = terminal.scrollHeight;
             }
-        }, { passive: true });
+        }
 
-        canvas.addEventListener('touchmove', (e) => {
-            if (!isDragging || e.touches.length === 0) return;
-            const deltaX = e.touches[0].clientX - previousMousePosition.x;
-            const deltaY = e.touches[0].clientY - previousMousePosition.y;
+        // START APP & INITIALIZE THREE.JS
+        function startApp() {
+            playTone(880, 0.15);
+            document.getElementById('boot-screen').style.display = 'none';
+            document.getElementById('app-container').style.display = 'flex';
+            initThree();
+        }
 
-            neuralMesh.rotation.y += deltaX * 0.01;
-            neuralMesh.rotation.x += deltaY * 0.01;
-            coreMesh.rotation.y += deltaX * 0.01;
-            coreMesh.rotation.x += deltaY * 0.01;
+        function initThree() {
+            const container = document.querySelector('.viewport-panel');
+            const canvas = document.getElementById('three-canvas');
+            
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.z = 4;
 
-            previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-        }, { passive: true });
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
 
-        window.addEventListener('touchend', () => { isDragging = false; });
+            // Create Outer Wireframe Sphere (Matrix Core)
+            const outerGeo = new THREE.IcosahedronGeometry(1.5, 2);
+            const outerMat = new THREE.MeshBasicMaterial({ color: 0x00ff66, wireframe: true, transparent: true, opacity: 0.6 });
+            coreMesh = new THREE.Mesh(outerGeo, outerMat);
+            scene.add(coreMesh);
+
+            // Inner Glowing Nucleus
+            const innerGeo = new THREE.IcosahedronGeometry(0.7, 1);
+            const innerMat = new THREE.MeshBasicMaterial({ color: 0x00f3ff, wireframe: true, transparent: true, opacity: 0.9 });
+            innerMesh = new THREE.Mesh(innerGeo, innerMat);
+            scene.add(innerMesh);
+
+            // Orbit drag control
+            let isDragging = false;
+            let previousMousePosition = { x: 0, y: 0 };
+
+            canvas.addEventListener('pointerdown', () => { isDragging = true; });
+            canvas.addEventListener('pointermove', (e) => {
+                if (!isDragging) return;
+                const deltaX = e.clientX - previousMousePosition.x;
+                const deltaY = e.clientY - previousMousePosition.y;
+                coreMesh.rotation.y += deltaX * 0.005;
+                coreMesh.rotation.x += deltaY * 0.005;
+                innerMesh.rotation.y -= deltaX * 0.005;
+                previousMousePosition = { x: e.clientX, y: e.clientY };
+            });
+            window.addEventListener('pointerup', () => { isDragging = false; });
+            canvas.addEventListener('pointerdown', (e) => { previousMousePosition = { x: e.clientX, y: e.clientY }; });
+
+            // Handle resize
+            window.addEventListener('resize', () => {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+
+            animate();
+        }
 
         function animate() {
             requestAnimationFrame(animate);
-            if (!isDragging) {
-                neuralMesh.rotation.y += autoRotateSpeed;
-                coreMesh.rotation.y -= autoRotateSpeed * 2;
+            if (coreMesh && innerMesh) {
+                coreMesh.rotation.y += 0.003;
+                innerMesh.rotation.y -= 0.006;
+                innerMesh.rotation.x += 0.002;
             }
             renderer.render(scene, camera);
         }
-        animate();
 
-        // USER ACCOUNT & CLOUD QUOTA SYNC
-        let activeUserEmail = null;
-        let remainingMinutes = 15.0;
+        // AI GENERATION & TIME-BANK DEDUCTION
+        function generateAI() {
+            const input = document.getElementById('prompt-input');
+            const promptVal = input.value.trim();
+            if (!promptVal) return;
 
-        async function loginUser() {
-            const email = prompt("Enter your account email:");
-            if (!email) return;
-
-            activeUserEmail = email.toLowerCase().trim();
-            document.getElementById('user-display').innerText = activeUserEmail;
-
-            if (dbClient) {
-                let { data, error } = await dbClient
-                    .from('user_quotas')
-                    .select('*')
-                    .eq('user_email', activeUserEmail)
-                    .single();
-
-                if (!data) {
-                    await dbClient
-                        .from('user_quotas')
-                        .insert([{ user_email: activeUserEmail, remaining_minutes: 15.0 }]);
-                    remainingMinutes = 15.0;
-                } else {
-                    remainingMinutes = parseFloat(data.remaining_minutes);
-                }
-                updateQuotaDisplay();
-                alert("Cloud Account Connected: " + activeUserEmail + "\nSynced Quota: " + remainingMinutes + " Mins");
-            }
-        }
-
-        function updateQuotaDisplay() {
-            document.getElementById('quota-display').innerText = remainingMinutes.toFixed(1) + " / 15.0 MINS";
-        }
-
-        async function executeNeuralRender() {
-            const input = document.getElementById('user-input');
-            const val = input.value.trim();
-            if(!val) return;
-
-            if(remainingMinutes >= 2.5) {
-                remainingMinutes -= 2.5;
-        }
-            updateQuotaDisplay();
-
-            if (dbClient && activeUserEmail) {
-                await dbClient
-                    .from('user_quotas')
-                    .update({ remaining_minutes: remainingMinutes })
-                    .eq('user_email', activeUserEmail);
+            if (quota < 2.5) {
+                log('ERROR: Insufficient time-bank quota.');
+                playTone(150, 0.3);
+                alert('Insufficient quota. Login to recharge time-bank ledger.');
+                return;
             }
 
-            alert("[WIZDON NEURAL ENGINE]: Generated render for: \"" + val + "\"\nRemaining Quota: " + remainingMinutes.toFixed(1) + " Mins.");
+            playTone(600, 0.1);
+            log(`Synthesizing matrix for prompt: "${promptVal}"`);
+            
+            // Deduct quota
+            quota -= 2.5;
+            document.getElementById('quota-val').innerText = `${quota.toFixed(1)} / 15.0 MINS`;
+            
+            // Morph 3D geometry dynamically
+            if (coreMesh) {
+                coreMesh.rotation.x += 1.5;
+                coreMesh.scale.set(1.2, 1.2, 1.2);
+                setTimeout(() => coreMesh.scale.set(1.0, 1.0, 1.0), 300);
+            }
+
             input.value = '';
+            log('Inference complete. 2.5 mins deducted.');
+        }
+
+        function toggleWireframe() {
+            const wire = document.getElementById('wireframe-toggle').checked;
+            if (coreMesh) coreMesh.material.wireframe = wire;
+        }
+
+        function openModal(id) {
+            playTone(520, 0.05);
+            document.getElementById(id).style.display = 'flex';
+        }
+
+        function closeModal(id) {
+            playTone(350, 0.05);
+            document.getElementById(id).style.display = 'none';
         }
     </script>
 </body>
-</html>
+    </html>
